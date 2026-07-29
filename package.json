@@ -2,11 +2,12 @@
   "name": "natours",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "start": "nodemon server.js",
     "start:prod": "set NODE_ENV=production && nodemon server.js",
-    "debug": "ndb server.js"
+    "debug": "ndb server.js",
+    "watch:js": "parcel watch starter/public/js/index.js --dist-dir starter/public/js/bundle",
+    "build:js": "parcel build starter/public/js/index.js --dist-dir starter/public/js/bundle"
   },
   "author": "Shaswat",
   "license": "ISC",
@@ -19,6 +20,7 @@
     "helmet": "^8.3.0",
     "hpp": "^0.2.3",
     "jsonwebtoken": "^9.0.3",
+    "leaflet": "^1.9.4",
     "mongoose": "^9.8.0",
     "morgan": "^1.11.0",
     "nodemailer": "^9.0.3",
@@ -37,6 +39,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^5.5.6",
     "eslint-plugin-react": "^7.37.5",
+    "parcel": "^2.16.4",
     "prettier": "^3.8.4"
   }
 }

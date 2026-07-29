@@ -25,7 +25,17 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'starter/public')));
 
 //Set security HTTP headers
-app.use(helmet());
+//map issue 
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+        'img-src': ["'self'", 'data:', 'https://*.tile.openstreetmap.org'],
+      },
+    },
+  }),
+);
 
 //Development Logging
 if (process.env.NODE_ENV === 'development') {
