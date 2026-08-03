@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "start": "nodemon server.js",
-    "start:prod": "set NODE_ENV=production && nodemon server.js",
+    "start:prod": "cross-env NODE_ENV=production nodemon server.js",
     "debug": "ndb server.js",
     "watch:js": "parcel watch starter/public/js/index.js --dist-dir starter/public/js/bundle",
     "build:js": "parcel build starter/public/js/index.js --dist-dir starter/public/js/bundle"
@@ -12,7 +12,9 @@
   "author": "Shaswat",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.19.0",
     "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^17.4.2",
     "express": "^4.22.2",
     "express-mongo-sanitize": "^2.2.0",
@@ -23,14 +25,18 @@
     "leaflet": "^1.9.4",
     "mongoose": "^9.8.0",
     "morgan": "^1.11.0",
+    "multer": "^2.2.0",
     "nodemailer": "^9.0.3",
     "pug": "^3.0.4",
     "pug-plain-loader": "^1.1.0",
+    "sharp": "^0.35.3",
     "slugify": "^1.6.9",
+    "stripe": "^22.4.0",
     "validator": "^13.15.35",
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {
+    "cross-env": "^10.1.0",
     "eslint": "^8.57.1",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^10.1.8",
