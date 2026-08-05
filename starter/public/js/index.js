@@ -1,5 +1,4 @@
 /* eslint-disable */
-
 import { login, logout } from './login.js';
 import { signup } from './signup.js';
 import { displayMap } from './mapbox.js';

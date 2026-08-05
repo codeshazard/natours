@@ -15857,8 +15857,18 @@ parcelHelpers.export(exports, "bookTour", ()=>bookTour);
 var _alertJs = require("./alert.js");
 var _axios = require("axios");
 var _axiosDefault = parcelHelpers.interopDefault(_axios);
+const stripe = Stripe(`pk_test_51U0ns5LdQLYvAiS85wzj4yrFIC7G1VBBqN5ZNbGb2WFddVYRvNbsE0UofELNg0xf9lGqdZTiU5WDoqqPNdNiRjfL00XnGpolX4`);
 const bookTour = async (tourId)=>{
-    (0, _alertJs.showAlert)('error', 'Booking is not available yet.');
+    try {
+        // 1) get checkout session from API
+        const session = await (0, _axiosDefault.default)(`/api/v1/bookings/checkout-session/${tourId}`);
+        await stripe.redirectToCheckout({
+            sessionId: session.data.session.id
+        });
+    //2) create checkout form + charge credit card
+    } catch (error) {
+        (0, _alertJs.showAlert)('error', error);
+    }
 };
 
 },{"./alert.js":"eGrZS","axios":"jo6P5","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["6jDAz","hstOJ"], "hstOJ", "parcelRequire11c7", {})

@@ -173,21 +173,16 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
   // 3)Send it to users email
-  const resetURL = `${req.protocol}://${req.get('host')}/api/v1/users/${resetToken}`;
-  const message = `Forgot ur password? Submit a PATCH request with ur new password and passwordConfirm to:${resetURL}.\nIf u didn't forget ur password, please ignore this email!`;
-
   try {
-    await sendEmail({
-      email: user.email,
-      subject: 'Your password reset token(valid for 10 mins)',
-      message,
-    });
+    const resetURL = `${req.protocol}://${req.get('host')}/api/v1/users/${resetToken}`;
+    await new Email(user, resetURL).sendPasswordReset();
 
     res.status(200).json({
       status: 'success',
       message: 'Token sent to email',
     });
   } catch (err) {
+    //console.log(err);
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save({ validateBeforeSave: false });
@@ -206,7 +201,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   const hashedToken = crypto
     .createHash('sha256')
     .update(req.params.token)
-    .digest('Hex');
+    .digest('hex');
 
   const user = await User.findOne({
     passwordResetToken: hashedToken,
