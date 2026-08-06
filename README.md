@@ -2,7 +2,7 @@
 
 > An awesome tour booking web application built with Node.js, Express, MongoDB, and Pug.
 
-**Live Application:** [https://natours-fn4m.onrender.com](https://natours-dck0.onrender.com)
+**Live Application:** [www.natours.com](https://natours-dck0.onrender.com)
 
 ## Description
 
