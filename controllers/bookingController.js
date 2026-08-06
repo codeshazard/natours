@@ -15,8 +15,8 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
     payment_method_types: ['card'],
     mode: 'payment',
 
-    success_url: `${req.protocol}://${req.get('host')}/?tour=${req.params.tourId}&user=${req.user.id}&price=${tour.price}`,
-    // success_url: `${req.protocol}://${req.get('host')}/my-tours?alert=booking`,
+    // success_url: `${req.protocol}://${req.get('host')}/?tour=${req.params.tourId}&user=${req.user.id}&price=${tour.price}`,
+    success_url: `${req.protocol}://${req.get('host')}/my-tours?alert=booking`,
     cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour.slug}`,
 
     customer_email: req.user.email,
@@ -30,7 +30,9 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
           product_data: {
             name: tour.name,
             description: tour.summary,
-            images: [`https://www.natours.dev/img/tours/${tour.imageCover}`],
+            images: [
+              `${req.protocol}://${req.get('host')}/img/tours/${tour.imageCover}`,
+            ],
           },
         },
         quantity: 1,
@@ -45,55 +47,55 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
 });
 
 // This is only TEMPORARY because it's unsecure: everyone can make bookings without paying
-exports.createBookingCheckout = catchAsync(async (req, res, next) => {
-  const { tour, user, price } = req.query;
+// exports.createBookingCheckout = catchAsync(async (req, res, next) => {
+//   const { tour, user, price } = req.query;
 
-  if (!tour && !user && !price) return next();
-  await Booking.create({ tour, user, price });
+//   if (!tour && !user && !price) return next();
+//   await Booking.create({ tour, user, price });
 
-  res.redirect(req.originalUrl.split('?')[0]);
-});
+//   res.redirect(req.originalUrl.split('?')[0]);
+// });
 
-// const createBookingCheckout = async (session) => {
-//   const tour = session.client_reference_id;
+const createBookingCheckout = async (session) => {
+  const tour = session.client_reference_id;
 
-//   const user = await User.findOne({
-//     email: session.customer_email,
-//   });
+  const user = await User.findOne({
+    email: session.customer_email,
+  });
 
-//   if (!user) {
-//     throw new Error(`No user found with email ${session.customer_email}`);
-//   }
+  if (!user) {
+    throw new Error(`No user found with email ${session.customer_email}`);
+  }
 
-//   const price = session.amount_total / 100;
+  const price = session.amount_total / 100;
 
-//   await Booking.create({
-//     tour,
-//     user: user.id,
-//     price,
-//   });
-// };
+  await Booking.create({
+    tour,
+    user: user.id,
+    price,
+  });
+};
 
-// exports.webhookCheckout = async (req, res, next) => {
-//   const signature = req.headers['stripe-signature'];
+exports.webhookCheckout = async (req, res, next) => {
+  const signature = req.headers['stripe-signature'];
 
-//   let event;
-//   try {
-//     event = stripe.webhooks.constructEvent(
-//       req.body,
-//       signature,
-//       process.env.STRIPE_WEBHOOK_SECRET,
-//     );
-//   } catch (err) {
-//     return res.status(400).send(`Webhook error: ${err}`);
-//   }
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      signature,
+      process.env.STRIPE_WEBHOOK_SECRET,
+    );
+  } catch (err) {
+    return res.status(400).send(`Webhook error: ${err}`);
+  }
 
-//   if (event.type === 'checkout.session.completed') {
-//     // Handle the completed checkout session
-//     await createBookingCheckout(event.data.object);
-//   }
-//   res.status(200).json({ received: true });
-// };
+  if (event.type === 'checkout.session.completed') {
+    // Handle the completed checkout session
+    await createBookingCheckout(event.data.object);
+  }
+  res.status(200).json({ received: true });
+};
 
 exports.createBooking = factory.createOne(Booking);
 exports.getAllBookings = factory.getAll(Booking);
